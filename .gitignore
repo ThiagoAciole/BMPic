@@ -1,0 +1,29 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local Python environments
+.venv/
+venv/
+env/
+ENV/
+
+# PyInstaller output and generated specs
+build/
+dist/
+*.spec
+
+# Local agent state
+.superpowers/
+
+# Logs and operating system files
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
