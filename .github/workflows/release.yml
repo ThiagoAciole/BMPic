@@ -1,0 +1,47 @@
+name: Build and release Bmpic
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install build dependencies
+        run: python -m pip install -r requirements-build.txt
+
+      - name: Build standalone executable
+        run: >-
+          python -m PyInstaller --noconfirm --clean --onefile --windowed
+          --name Bmpic
+          --icon assets\icon.ico
+          --add-data "assets;assets"
+          --collect-all customtkinter
+          app.py
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag = "build-$env:GITHUB_RUN_NUMBER-$env:GITHUB_RUN_ATTEMPT"
+          $notes = "Executável gerado automaticamente a partir do commit $env:GITHUB_SHA."
+          gh release create $tag "dist/Bmpic.exe" `
+            --repo "$env:GITHUB_REPOSITORY" `
+            --title "Bmpic build $env:GITHUB_RUN_NUMBER" `
+            --notes $notes `
+            --latest
